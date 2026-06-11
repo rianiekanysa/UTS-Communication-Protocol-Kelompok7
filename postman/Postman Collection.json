@@ -1,0 +1,164 @@
+{
+  "info": {
+    "_postman_id": "3482689a-ee46-49be-b15c-d15d9eff95a6",
+    "name": "My Collection",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55101878",
+    "_collection_link": "https://go.postman.co/collection/55101878-3482689a-ee46-49be-b15c-d15d9eff95a6?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "http://postman-echo.com/get",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "postman-echo.com/get",
+          "host": [
+            "postman-echo",
+            "com"
+          ],
+          "path": [
+            "get"
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": []
+    },
+    {
+      "name": "Post data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Successful POST request\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              ""
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "postman-echo.com/post",
+          "host": [
+            "postman-echo",
+            "com"
+          ],
+          "path": [
+            "post"
+          ]
+        },
+        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:8000/api/v1/ingest",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// API Screener Yahoo Finance untuk mengambil saham teraktif/terbagus hari ini\r",
+              "const screenerUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?scrIds=most_actives&count=5';\r",
+              "\r",
+              "pm.sendRequest(screenerUrl, function (err, response) {\r",
+              "    if (!err) {\r",
+              "        let jsonData = response.json();\r",
+              "        \r",
+              "        // Mengambil kandidat saham terbaik urutan pertama [0] dari hasil screening\r",
+              "        let topStock = jsonData.finance.result[0].quotes[0];\r",
+              "        \r",
+              "        let tickerName = topStock.symbol;        // Mengambil kode saham (misal: NVDA, TSLA)\r",
+              "        let currentPrice = topStock.regularMarketPrice; // Mengambil harga live terbaru\r",
+              "        let marketVolume = topStock.regularMarketVolume; // Mengambil volume perdagangan\r",
+              "        \r",
+              "        // Menyimpan hasil screening ke variabel lingkungan Postman\r",
+              "        pm.variables.set(\"live_ticker\", tickerName);\r",
+              "        pm.variables.set(\"live_price\", currentPrice);\r",
+              "        pm.variables.set(\"live_volume\", marketVolume);\r",
+              "        pm.variables.set(\"current_time\", Math.floor(Date.now() / 1000));\r",
+              "        \r",
+              "        console.log(`Berhasil screening! Saham teraktif saat ini: ${tickerName} dengan harga $${currentPrice}`);\r",
+              "    } else {\r",
+              "        console.log(\"Gagal melakukan screening saham terbaik: \" + err);\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ticker\": \"{{live_ticker}}\",\r\n    \"price\": {{live_price}},\r\n    \"volume\": {{live_volume}},\r\n    \"timestamp\": {{current_time}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/ingest",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "ingest"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
