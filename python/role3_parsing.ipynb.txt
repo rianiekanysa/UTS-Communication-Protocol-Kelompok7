@@ -1,0 +1,61 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 0
+        },
+        "id": "bqOHhuex9nuj",
+        "outputId": "a03bcde7-9c32-4fb8-aa68-f27d958b6111"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "  ticker  price    volume   timestamp         waktu_lokal\n",
+            "0   AAPL  175.5  50000000  1780747100 2026-06-06 11:58:20\n"
+          ]
+        }
+      ],
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "data = {\n",
+        "    \"ticker\": \"AAPL\",\n",
+        "    \"price\": 175.5,\n",
+        "    \"volume\": 50000000,\n",
+        "    \"timestamp\": 1780747100\n",
+        "}\n",
+        "\n",
+        "df = pd.DataFrame([data])\n",
+        "\n",
+        "df[\"waktu_lokal\"] = pd.to_datetime(\n",
+        "    df[\"timestamp\"],\n",
+        "    unit=\"s\"\n",
+        ")\n",
+        "\n",
+        "df.to_csv(\"hasil_parsing.csv\", index=False)\n",
+        "\n",
+        "print(df)"
+      ]
+    }
+  ]
+}
